@@ -1,7 +1,7 @@
-from fastapi import (
-    FastAPI,
-    Request,
-)
+from typing import Annotated
+
+from fastapi import FastAPI, Request, HTTPException, status
+from fastapi.params import Depends
 
 from schemas.movies import Movie
 
@@ -35,6 +35,22 @@ MOVIES = [
 ]
 
 
+def prefetch_movie(
+    movie_id: int,
+) -> Movie:
+    movie_item = next(
+        (movie for movie in MOVIES if movie.id == movie_id),
+        None,
+    )
+    if movie_item:
+        return movie_item
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"Movie with id {movie_id} not found",
+    )
+
+
 @app.get("/")
 def read_root(
     request: Request,
@@ -63,7 +79,6 @@ def read_movies_list():
     response_model=Movie,
 )
 def read_movie(
-    movie_id: int,
+    movie: Annotated[Movie, Depends(prefetch_movie)],
 ):
-    movie_item = next((movie for movie in MOVIES if movie.id == movie_id), None)
-    return movie_item
+    return movie
