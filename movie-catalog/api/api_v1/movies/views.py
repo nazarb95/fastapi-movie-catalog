@@ -1,14 +1,16 @@
 import random
 from typing import Annotated
 
-from annotated_types import Len, Ge, Le
-from fastapi import APIRouter, Depends, Form, status
+from fastapi import APIRouter, Depends, status
 
 from api.api_v1.movies.dependencies import (
     prefetch_movie,
 )
 from api.api_v1.movies.crud import MOVIES
-from schemas.movies import Movie
+from schemas.movies import (
+    Movie,
+    MovieCreate,
+)
 
 router = APIRouter(
     prefix="/movies",
@@ -29,12 +31,7 @@ def read_movies_list():
     response_model=Movie,
     status_code=status.HTTP_201_CREATED,
 )
-def create_movie(
-    title: Annotated[str, Len(min_length=1, max_length=70), Form()],
-    description: Annotated[str, Len(min_length=10, max_length=250), Form()],
-    year: Annotated[int, Ge(1900), Le(2026), Form()],
-    genre: Annotated[str, Len(min_length=1, max_length=25), Form()],
-):
+def create_movie(movie: MovieCreate):
     # generate a new id and checking its availability
     while True:
         movie_id = random.randint(1, 100)
@@ -45,13 +42,7 @@ def create_movie(
         if not exist_movie_id:
             break
 
-    return Movie(
-        id=movie_id,
-        title=title,
-        description=description,
-        year=year,
-        genre=genre,
-    )
+    return Movie(id=movie_id, **movie.model_dump())
 
 
 @router.get(
