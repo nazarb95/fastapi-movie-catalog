@@ -1,7 +1,6 @@
-import random
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException
 
 from api.api_v1.movies.dependencies import (
     prefetch_movie,
@@ -32,21 +31,20 @@ def read_movies_list():
     status_code=status.HTTP_201_CREATED,
 )
 def create_movie(movie: MovieCreate):
-    # generate a new id and checking its availability
-    while True:
-        movie_id = random.randint(1, 100)
-        exist_movie_id = next(
-            (movie.id for movie in MOVIES if movie.id == movie_id),
-            None,
-        )
-        if not exist_movie_id:
-            break
-
-    return Movie(id=movie_id, **movie.model_dump())
+    exist_slug = next(
+        (movie.slug for movie_item in MOVIES if movie_item.slug == movie.slug),
+        None,
+    )
+    if not exist_slug:
+        return Movie(**movie.model_dump())
+    raise HTTPException(
+        status_code=status.HTTP_409_CONFLICT,
+        detail=f"Movie with {movie.slug!r} slug already exists",
+    )
 
 
 @router.get(
-    "/{movie_id}",
+    "/{slug}",
     response_model=Movie,
 )
 def read_movie(
