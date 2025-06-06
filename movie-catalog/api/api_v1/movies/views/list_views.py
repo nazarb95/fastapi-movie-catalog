@@ -9,6 +9,7 @@ from api.api_v1.movies.crud import storage
 from schemas.movies import (
     Movie,
     MovieCreate,
+    MovieRead,
 )
 
 router = APIRouter(
@@ -19,7 +20,7 @@ router = APIRouter(
 
 @router.get(
     "/",
-    response_model=list[Movie],
+    response_model=list[MovieRead],
 )
 def read_movies_list() -> list[Movie]:
     return storage.get()
@@ -27,7 +28,7 @@ def read_movies_list() -> list[Movie]:
 
 @router.post(
     "/",
-    response_model=Movie,
+    response_model=MovieRead,
     status_code=status.HTTP_201_CREATED,
 )
 def create_movie(
