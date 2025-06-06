@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, status, HTTPException
 
 from api.api_v1.movies.dependencies import (
     prefetch_movie,
+    exists_slug_movie,
 )
-from api.api_v1.movies.crud import MOVIES
+from api.api_v1.movies.crud import storage
 from schemas.movies import (
     Movie,
     MovieCreate,
@@ -21,8 +22,8 @@ router = APIRouter(
     "/",
     response_model=list[Movie],
 )
-def read_movies_list():
-    return MOVIES
+def read_movies_list() -> list[Movie]:
+    return storage.get()
 
 
 @router.post(
@@ -30,17 +31,13 @@ def read_movies_list():
     response_model=Movie,
     status_code=status.HTTP_201_CREATED,
 )
-def create_movie(movie: MovieCreate):
-    exist_slug = next(
-        (movie.slug for movie_item in MOVIES if movie_item.slug == movie.slug),
-        None,
-    )
-    if not exist_slug:
-        return Movie(**movie.model_dump())
-    raise HTTPException(
-        status_code=status.HTTP_409_CONFLICT,
-        detail=f"Movie with {movie.slug!r} slug already exists",
-    )
+def create_movie(
+    movie: Annotated[
+        MovieCreate,
+        Depends(exists_slug_movie),
+    ],
+) -> Movie:
+    return storage.create(movie_in=movie)
 
 
 @router.get(
@@ -48,6 +45,9 @@ def create_movie(movie: MovieCreate):
     response_model=Movie,
 )
 def read_movie(
-    movie: Annotated[Movie, Depends(prefetch_movie)],
-):
+    movie: Annotated[
+        Movie,
+        Depends(prefetch_movie),
+    ],
+) -> Movie:
     return movie
