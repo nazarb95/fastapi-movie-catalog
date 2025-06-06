@@ -71,3 +71,4 @@ class Movie(MovieBase):
     """
 
     slug: str
+    notes: str = "This movie is really cool"
