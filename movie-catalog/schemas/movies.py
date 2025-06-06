@@ -65,6 +65,14 @@ class MoviePartialUpdate(MovieBase):
     genre: GenreString | None = None
 
 
+class MovieRead(MovieBase):
+    """
+    Model for reading data
+    """
+
+    slug: str
+
+
 class Movie(MovieBase):
     """
     Movie Model
