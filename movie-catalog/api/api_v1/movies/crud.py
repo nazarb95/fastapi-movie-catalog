@@ -1,5 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
+from core.config import MOVIE_STORAGE_FILE_PATH
 from schemas.movies import Movie, MovieCreate, MovieUpdate
 
 MOVIES = []
@@ -7,6 +8,15 @@ MOVIES = []
 
 class MovieStorage(BaseModel):
     slug_movie: dict[str, Movie] = {}
+
+    def save_state(self) -> None:
+        MOVIE_STORAGE_FILE_PATH.write_text(self.model_dump_json(indent=2))
+
+    @classmethod
+    def from_state(cls) -> "MovieStorage":
+        if not MOVIE_STORAGE_FILE_PATH.exists():
+            return MovieStorage()
+        return cls.model_validate_json(MOVIE_STORAGE_FILE_PATH.read_text())
 
     def get(self) -> list[Movie]:
         return list(self.slug_movie.values())
@@ -19,10 +29,13 @@ class MovieStorage(BaseModel):
             **movie_in.model_dump(),
         )
         self.slug_movie[movie.slug] = movie
+        self.save_state()
+
         return movie
 
     def delete_by_slug(self, slug: str) -> None:
         self.slug_movie.pop(slug, None)
+        self.save_state()
 
     def delete(self, movie: Movie) -> None:
         self.delete_by_slug(slug=movie.slug)
@@ -34,42 +47,21 @@ class MovieStorage(BaseModel):
     ) -> Movie:
         for field_name, value in movie_in:
             setattr(movie, field_name, value)
+        self.save_state()
 
         return movie
 
     def update_partial(self, movie: Movie, movie_in: MovieUpdate) -> Movie:
         for field_name, value in movie_in.model_dump(exclude_unset=True).items():
             setattr(movie, field_name, value)
+        self.save_state()
         return movie
 
 
 storage = MovieStorage()
 
-storage.create(
-    MovieCreate(
-        slug="how-to-train-your-dragon",
-        title="How to Train Your Dragon",
-        description="A hapless young Viking who aspires to hunt dragons becomes the unlikely friend of a young dragon himself, and learns there may be more to the creatures than he assumed.",
-        year=2010,
-        genre="Fantasy",
-    )
-)
-
-storage.create(
-    MovieCreate(
-        slug="mission-impossible-the-final-reckoning",
-        title="Mission: Impossible – The Final Reckoning",
-        description="Our lives are the sum of our choices. Tom Cruise is Ethan Hunt in Mission: Impossible — The Final Reckoning.",
-        year=2025,
-        genre="Thriller",
-    )
-)
-storage.create(
-    MovieCreate(
-        slug="harry-potter-and-the-sorcerer_s-stone",
-        title="Harry Potter and the Sorcerer’s Stone",
-        description="An orphaned boy enrolls in a school of wizardry, where he learns the truth about himself, his family and the terrible evil that haunts the magical world.",
-        year=2001,
-        genre="Fantasy",
-    )
-)
+try:
+    storage = MovieStorage.from_state()
+except ValidationError:
+    storage = MovieStorage()
+    storage.save_state()
