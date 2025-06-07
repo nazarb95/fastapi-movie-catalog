@@ -2,9 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status, BackgroundTasks
 
-from api.api_v1.movies.dependencies import (
-    exists_slug_movie,
-)
+from api.api_v1.movies.dependencies import exists_slug_movie, save_storage_state
 from api.api_v1.movies.crud import storage
 from schemas.movies import (
     Movie,
@@ -15,6 +13,7 @@ from schemas.movies import (
 router = APIRouter(
     prefix="/movies",
     tags=["Movies"],
+    dependencies=[Depends(save_storage_state)],
 )
 
 
@@ -36,7 +35,5 @@ def create_movie(
         MovieCreate,
         Depends(exists_slug_movie),
     ],
-    background_task: BackgroundTasks,
 ) -> Movie:
-    background_task.add_task(storage.save_state)
     return storage.create(movie_in=movie_create)
