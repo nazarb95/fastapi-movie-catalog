@@ -18,7 +18,6 @@ from fastapi.security import (
 from api.api_v1.movies.crud import storage
 from core.config import (
     USERS_DB,
-    REDIS_TOKENS_SET_NAME,
 )
 from schemas.movies import Movie, MovieCreate
 from api.api_v1.auth.services import (
