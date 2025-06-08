@@ -2,24 +2,24 @@ import logging
 from typing import Annotated
 
 from fastapi import (
+    Depends,
     HTTPException,
     Request,
-    Depends,
     status,
 )
 from fastapi.security import (
     HTTPAuthorizationCredentials,
-    HTTPBearer,
     HTTPBasic,
     HTTPBasicCredentials,
+    HTTPBearer,
 )
 
-from api.api_v1.movies.crud import storage
-from schemas.movies import Movie, MovieCreate
 from api.api_v1.auth.services import (
     redis_tokens,
     redis_users,
 )
+from api.api_v1.movies.crud import storage
+from schemas.movies import Movie
 
 logger = logging.getLogger(__name__)
 

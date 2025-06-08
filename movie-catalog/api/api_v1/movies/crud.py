@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from redis import Redis
 
 from core import config
-from schemas.movies import Movie, MovieCreate, MovieUpdate, MoviePartialUpdate
+from schemas.movies import Movie, MovieCreate, MoviePartialUpdate, MovieUpdate
 
 logger = logging.getLogger(__name__)
 

@@ -1,16 +1,15 @@
-from typing import Annotated
 
 from fastapi import (
     APIRouter,
     Depends,
-    status,
     HTTPException,
+    status,
 )
 
+from api.api_v1.movies.crud import MovieAlreadyExistsError, storage
 from api.api_v1.movies.dependencies import (
     api_token_or_user_basic_auth_required_for_unsafe_methods,
 )
-from api.api_v1.movies.crud import storage, MovieAlreadyExistsError
 from schemas.movies import (
     Movie,
     MovieCreate,
