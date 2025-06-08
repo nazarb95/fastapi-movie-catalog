@@ -58,19 +58,6 @@ def prefetch_movie(
     )
 
 
-def exists_slug_movie(
-    movie: MovieCreate,
-) -> MovieCreate:
-    exist_slug = storage.get_by_slug(movie.slug)
-
-    if not exist_slug:
-        return movie
-    raise HTTPException(
-        status_code=status.HTTP_409_CONFLICT,
-        detail=f"Movie with {movie.slug!r} slug already exists",
-    )
-
-
 def validate_api_token(
     api_token: HTTPAuthorizationCredentials,
 ):
