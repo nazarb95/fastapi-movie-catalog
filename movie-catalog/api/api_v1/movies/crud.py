@@ -45,7 +45,7 @@ class MovieStorage(BaseModel):
                 redis.hvals(
                     config.REDIS_MOVIE_HASH_HAME,
                 ),
-            )
+            ),
         )
 
     def get_by_slug(self, slug: str) -> Movie | None:

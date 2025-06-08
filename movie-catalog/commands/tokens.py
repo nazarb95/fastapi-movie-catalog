@@ -53,7 +53,7 @@ def create() -> None:
     """
     token = tokens.generate_and_save_token()
     print(
-        f"Token [bold]{token}[/bold] was [green]created[/green] and saved to the database"
+        f"Token [bold]{token}[/bold] was [green]created[/green] and saved to the database",
     )
 
 
@@ -86,5 +86,5 @@ def remove(
         return
     tokens.delete_token(token)
     print(
-        f"Token [bold]{token}[/bold] has been [green]removed[/green] from the database"
+        f"Token [bold]{token}[/bold] has been [green]removed[/green] from the database",
     )

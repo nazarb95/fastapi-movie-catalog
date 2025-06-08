@@ -29,7 +29,7 @@ UNSAFE_METHODS = frozenset(
         "PUT",
         "PATCH",
         "DELETE",
-    }
+    },
 )
 
 statis_api_token = HTTPBearer(
