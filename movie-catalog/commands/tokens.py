@@ -42,7 +42,7 @@ def list_tokens() -> None:
     Get all tokens
     """
     print(Markdown("# Tokens:\n"))
-    print(Markdown("\n- ".join([""] + tokens.get_tokens())))
+    print(Markdown("\n- ".join(["", *tokens.get_tokens()])))
     print()
 
 
@@ -53,7 +53,8 @@ def create() -> None:
     """
     token = tokens.generate_and_save_token()
     print(
-        f"Token [bold]{token}[/bold] was [green]created[/green] and saved to the database",
+        f"Token [bold]{token}[/bold] was [green]created[/green] "
+        f"and saved to the database",
     )
 
 

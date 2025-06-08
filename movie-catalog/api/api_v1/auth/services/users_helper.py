@@ -15,7 +15,6 @@ class AbstractUsersHelper(ABC):
         :param username: username
         :return: password by user, if found
         """
-        pass
 
     @classmethod
     def check_passwords_match(

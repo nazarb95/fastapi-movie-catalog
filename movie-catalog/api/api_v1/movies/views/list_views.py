@@ -1,4 +1,3 @@
-
 from fastapi import (
     APIRouter,
     Depends,
@@ -69,8 +68,8 @@ def create_movie(
         return storage.create_or_raise_if_exists(
             movie_in=movie_create,
         )
-    except MovieAlreadyExistsError:
+    except MovieAlreadyExistsError as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Movie with slug={movie_create.slug!r} already exists.",
-        )
+        ) from e
