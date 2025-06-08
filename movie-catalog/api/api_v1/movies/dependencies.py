@@ -142,3 +142,7 @@ def api_token_or_user_basic_auth_required_for_unsafe_methods(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="API token or basic auth required",
     )
+
+
+def check_slug_exists(slug: str) -> bool:
+    db = (config.REDIS_DB_MOVIES,)
