@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from redis import Redis
 
 from core import config
-from schemas.movies import Movie, MovieCreate, MovieUpdate
+from schemas.movies import Movie, MovieCreate, MovieUpdate, MoviePartialUpdate
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +88,7 @@ class MovieStorage(BaseModel):
         self.save_movie(movie)
         return movie
 
-    def update_partial(self, movie: Movie, movie_in: MovieUpdate) -> Movie:
+    def update_partial(self, movie: Movie, movie_in: MoviePartialUpdate) -> Movie:
         for field_name, value in movie_in.model_dump(exclude_unset=True).items():
             setattr(movie, field_name, value)
         self.save_movie(movie)

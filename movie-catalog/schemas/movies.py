@@ -54,7 +54,7 @@ class MovieUpdate(MovieBase):
     description: DescriptionString
 
 
-class MoviePartialUpdate(MovieBase):
+class MoviePartialUpdate(BaseModel):
     """
     Model for partial updating movie information
     """
