@@ -73,7 +73,8 @@ target-version = "py313"
 # Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
 # McCabe complexity (`C901`) by default.
 select = [
-    "FAST"
+    "ANN",  # flake-8 annotations (ANN)
+    "FAST",  # FastAPI (FAST)
 ]
 ignore = [
 ]
