@@ -1,4 +1,5 @@
 import logging
+from typing import cast
 
 from pydantic import BaseModel
 from redis import Redis
@@ -54,9 +55,12 @@ class MovieStorage(BaseModel):
         return Movie.model_validate_json(data)
 
     def exists(self, slug: str) -> bool:
-        return redis.hexists(
-            name=config.REDIS_MOVIE_HASH_HAME,
-            key=slug,
+        return cast(
+            bool,
+            redis.hexists(
+                name=config.REDIS_MOVIE_HASH_HAME,
+                key=slug,
+            ),
         )
 
     def create(self, movie_in: MovieCreate) -> Movie:

@@ -51,7 +51,7 @@ def read_movie_details(
 def update_movie_details(
     movie: MovieBySlug,
     movie_in: MovieUpdate,
-):
+) -> Movie:
     return storage.update(
         movie=movie,
         movie_in=movie_in,
@@ -65,7 +65,7 @@ def update_movie_details(
 def update_movie_details_partial(
     movie: MovieBySlug,
     movie_in: MoviePartialUpdate,
-):
+) -> Movie:
     return storage.update_partial(
         movie=movie,
         movie_in=movie_in,
@@ -78,5 +78,5 @@ def update_movie_details_partial(
 )
 def delete_movie(
     movie: MovieBySlug,
-):
+) -> None:
     storage.delete(movie=movie)

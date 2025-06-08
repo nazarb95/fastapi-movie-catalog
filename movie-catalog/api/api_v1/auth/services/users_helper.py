@@ -36,7 +36,7 @@ class AbstractUsersHelper(ABC):
         self,
         username: str,
         password: str,
-    ):
+    ) -> bool:
         """
         Check if the password is valid.
 
