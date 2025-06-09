@@ -38,6 +38,34 @@ class MovieTestCase(TestCase):
             movie.genre,
         )
 
+    def test_movie_create_accepts_different_titles(self) -> None:
+        titles = [
+            "The Shawshank Redemption",
+            "The Godfather",
+            "Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb",
+            (
+                "Borat: Cultural Learnings of America for "
+                "Make Benefit Glorious Nation of Kazakhstan"
+            ),
+            "The Dark Knight",
+            "Pulp Fiction",
+            "Forrest Gump",
+        ]
+
+        for title in titles:
+            with self.subTest(title=title, msg=f"test-title-{title}"):
+                movie_create = MovieCreate(
+                    slug="some-slug",
+                    description="Some description",
+                    title=title,
+                    year=2025,
+                    genre="Some genre",
+                )
+                self.assertEqual(
+                    title,
+                    movie_create.title,
+                )
+
 
 class MovieUpdateTestCase(TestCase):
     def test_movie_can_be_updated_from_update_schema(self) -> None:
