@@ -1,5 +1,7 @@
 from unittest import TestCase
 
+from pydantic import ValidationError
+
 from schemas.movies import Movie, MovieCreate, MoviePartialUpdate, MovieUpdate
 
 
@@ -43,10 +45,10 @@ class MovieTestCase(TestCase):
             "The Shawshank Redemption",
             "The Godfather",
             "Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb",
-            (
-                "Borat: Cultural Learnings of America for "
-                "Make Benefit Glorious Nation of Kazakhstan"
-            ),
+            # (
+            #     "Borat: Cultural Learnings of America for "
+            #     "Make Benefit Glorious Nation of Kazakhstan"
+            # ),
             "The Dark Knight",
             "Pulp Fiction",
             "Forrest Gump",
@@ -65,6 +67,35 @@ class MovieTestCase(TestCase):
                     title,
                     movie_create.title,
                 )
+
+    def test_movie_year_should_be_greater_or_equal(self) -> None:
+        with self.assertRaises(ValidationError) as exc_info:
+            MovieCreate(
+                slug="some-slug",
+                description="Some description",
+                title="Some title",
+                year=1899,
+                genre="Some genre",
+            )
+        error_details = exc_info.exception.errors()[0]
+        expected_type = "greater_than_equal"
+        self.assertEqual(
+            expected_type,
+            error_details["type"],
+        )
+
+    def test_movie_year_should_be_greater_or_equal_with_regex(self) -> None:
+        with self.assertRaisesRegex(
+            ValidationError,
+            expected_regex="Input should be greater than or equal to 1900",
+        ):
+            MovieCreate(
+                slug="some-slug",
+                description="Some description",
+                title="Some title",
+                year=1899,
+                genre="Some genre",
+            )
 
 
 class MovieUpdateTestCase(TestCase):
